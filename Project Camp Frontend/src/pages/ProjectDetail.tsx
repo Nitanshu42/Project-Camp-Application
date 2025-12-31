@@ -13,7 +13,7 @@ import {
   deleteTask,
   updateTaskStatus,
 } from "@/services/task.api";
-import { getProjectFiles, uploadFile, deleteFile } from "@/services/file.api";
+// import { getProjectFiles, uploadFile, deleteFile } from "@/services/file.api";
 import { updateProject, deleteProject } from "@/services/project.api";
 import { useNavigate } from "react-router-dom";
 import { Edit2, Trash2 } from "lucide-react";
@@ -22,8 +22,8 @@ import { Input } from "@/components/ui/input";
 import TaskList from "@/components/tasks/TaskList";
 import AddTaskModal from "@/components/tasks/AddTaskModal";
 import { NoteList } from "@/components/notes/NoteList";
-import UploadFileModal from "@/components/files/UploadFileModal";
-import FileList from "@/components/files/FileList";
+// import UploadFileModal from "@/components/files/UploadFileModal";
+// import FileList from "@/components/files/FileList";
 
 import { TaskDetailModal } from "@/components/tasks/TaskDetailModal";
 import { RoleGuard } from "@/components/common/RoleGuard";
@@ -57,7 +57,7 @@ const ProjectDetail = () => {
   const [activeTab, setActiveTab] = useState("tasks");
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
-  const [files, setFiles] = useState<any[]>([]);
+  // const [files, setFiles] = useState<any[]>([]);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -76,17 +76,18 @@ const ProjectDetail = () => {
 
     const load = async () => {
       try {
-        const [projectData, taskData, roleData, fileData] = await Promise.all([
+        // const [projectData, taskData, roleData, fileData] = await Promise.all([
+        const [projectData, taskData, roleData] = await Promise.all([
           getProjectById(projectId),
           getTasksByProject(projectId),
           getMyProjectRole(projectId),
-          getProjectFiles(projectId),
+          // getProjectFiles(projectId),
         ]);
 
         setProject(projectData);
         setTasks(taskData);
         setUserRole(roleData.role);
-        setFiles(fileData);
+        // setFiles(fileData);
       } catch (e) {
         console.error("Failed to load project data", e);
       } finally {
@@ -149,46 +150,46 @@ const ProjectDetail = () => {
   };
 
   /* -------- UPLOAD FILE -------- */
-  const handleUploadFile = async (file: File) => {
-    if (!projectId) return;
-    setIsUploading(true);
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const newFile = await uploadFile(projectId, formData);
-      setFiles((prev) => [newFile, ...prev]);
-      setShowUploadModal(false);
-      toast({
-        title: "File Uploaded",
-        description: "File has been successfully uploaded.",
-      });
-    } catch (error: any) {
-      console.error(error);
-      alert(error.message || "Failed to upload file");
-    } finally {
-      setIsUploading(false);
-    }
-  };
+  // const handleUploadFile = async (file: File) => {
+  //   if (!projectId) return;
+  //   setIsUploading(true);
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append("file", file);
+  //
+  //     const newFile = await uploadFile(projectId, formData);
+  //     setFiles((prev) => [newFile, ...prev]);
+  //     setShowUploadModal(false);
+  //     toast({
+  //       title: "File Uploaded",
+  //       description: "File has been successfully uploaded.",
+  //     });
+  //   } catch (error: any) {
+  //     console.error(error);
+  //     alert(error.message || "Failed to upload file");
+  //   } finally {
+  //     setIsUploading(false);
+  //   }
+  // };
 
   /* -------- DELETE FILE -------- */
-  const handleDeleteFile = async (fileId: string) => {
-    if (!projectId) return;
-
-    if (!confirm("Are you sure you want to delete this file?")) return;
-
-    try {
-      await deleteFile(projectId, fileId);
-      setFiles((prev) => prev.filter((f) => f._id !== fileId));
-      toast({
-        title: "File Deleted",
-        description: "File has been successfully deleted.",
-      });
-    } catch (error: any) {
-      console.error(error);
-      alert(error.message || "Failed to delete file");
-    }
-  };
+  // const handleDeleteFile = async (fileId: string) => {
+  //   if (!projectId) return;
+  //
+  //   if (!confirm("Are you sure you want to delete this file?")) return;
+  //
+  //   try {
+  //     await deleteFile(projectId, fileId);
+  //     setFiles((prev) => prev.filter((f) => f._id !== fileId));
+  //     toast({
+  //       title: "File Deleted",
+  //       description: "File has been successfully deleted.",
+  //     });
+  //   } catch (error: any) {
+  //     console.error(error);
+  //     alert(error.message || "Failed to delete file");
+  //   }
+  // };
 
   /* -------- UPDATE PROJECT -------- */
   const handleUpdateProject = async (id: string, data: any) => {
@@ -322,9 +323,9 @@ const ProjectDetail = () => {
             View Demo
           </Button>
           {activeTab === "files" && (
-            <Button onClick={() => setShowUploadModal(true)}>
+            <Button onClick={() => setShowUploadModal(true)} disabled>
               <Upload className="w-4 h-4 mr-2" />
-              Upload File
+              Upload File (Coming Soon)
             </Button>
           )}
 
@@ -391,7 +392,8 @@ const ProjectDetail = () => {
           <NoteList />
         </TabsContent>
         <TabsContent value="files" className="mt-6">
-          <FileList files={files} onDelete={handleDeleteFile} />
+          <div className="p-4 text-center text-muted-foreground">File management coming soon.</div>
+          {/* <FileList files={files} onDelete={handleDeleteFile} /> */}
         </TabsContent>
       </Tabs>
 
@@ -410,12 +412,12 @@ const ProjectDetail = () => {
       />
 
       {/* UPLOAD FILE MODAL */}
-      <UploadFileModal
+      {/* <UploadFileModal
         open={showUploadModal}
         onClose={() => setShowUploadModal(false)}
         onUpload={handleUploadFile}
         isUploading={isUploading}
-      />
+      /> */}
 
       {/* EDIT PROJECT MODAL */}
       {project && (
