@@ -48,7 +48,7 @@ router
   .route("/:projectId")
   .get(getProjectById)
   .put(
-    validateProjectPermission([UserRolesEnum.ADMIN]),
+    validateProjectPermission([UserRolesEnum.ADMIN, UserRolesEnum.PROJECT_ADMIN]),
     updateProject
   )
   .delete(

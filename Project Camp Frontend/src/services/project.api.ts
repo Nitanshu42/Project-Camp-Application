@@ -65,7 +65,11 @@ export const createProject = async (data: {
 /* ================= UPDATE PROJECT ================= */
 export const updateProject = async (
   projectId: string,
-  data: { name: string; description?: string }
+  data: {
+    name: string;
+    description?: string;
+    status?: "active" | "completed";
+  }
 ) => {
   const response = await fetch(
     `${API_BASE_URL}/api/v1/projects/${projectId}`,
@@ -128,6 +132,22 @@ export const addMember = async (
 
   if (!response.ok) {
     throw new Error(result.message || "Failed to add member");
+  }
+
+  return result.data;
+};
+
+/* ================= DELETE PROJECT ================= */
+export const deleteProject = async (projectId: string) => {
+  const response = await fetch(`${API_BASE_URL}/api/v1/projects/${projectId}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.message || "Failed to delete project");
   }
 
   return result.data;

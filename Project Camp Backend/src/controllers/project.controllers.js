@@ -183,7 +183,7 @@ const createProject = asyncHandler(async (req, res) => {
 });
 
 const updateProject = asyncHandler(async (req, res) => {
-  const { name, description } = req.body;
+  const { name, description, status } = req.body;
   const { projectId } = req.params;
 
   const project = await Project.findByIdAndUpdate(
@@ -191,6 +191,7 @@ const updateProject = asyncHandler(async (req, res) => {
     {
       name,
       description,
+      status,
     },
     { new: true },
   );
@@ -205,6 +206,15 @@ const updateProject = asyncHandler(async (req, res) => {
 
 const deleteProject = asyncHandler(async (req, res) => {
   const { projectId } = req.params;
+
+  const projectToCheck = await Project.findById(projectId);
+  if (!projectToCheck) {
+    throw new ApiError(404, "Project not found");
+  }
+
+  if (projectToCheck.status !== "completed") {
+    throw new ApiError(400, "Project must be completed to be deleted");
+  }
 
   const project = await Project.findByIdAndDelete(projectId);
   if (!project) {
