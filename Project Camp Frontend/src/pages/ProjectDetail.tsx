@@ -67,7 +67,7 @@ const ProjectDetail = () => {
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [editedDescription, setEditedDescription] = useState("");
 
-  const navigate = useNavigate();
+
   const { toast } = useToast();
 
   /* -------- LOAD PROJECT + TASKS + ROLE -------- */
