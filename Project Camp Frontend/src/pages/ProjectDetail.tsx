@@ -14,6 +14,10 @@ import {
   updateTaskStatus,
 } from "@/services/task.api";
 import { getProjectFiles, uploadFile, deleteFile } from "@/services/file.api";
+import { updateProject, deleteProject } from "@/services/project.api";
+import { useNavigate } from "react-router-dom";
+import { Edit2, Trash2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 import TaskList from "@/components/tasks/TaskList";
 import AddTaskModal from "@/components/tasks/AddTaskModal";
@@ -59,6 +63,11 @@ const ProjectDetail = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showVideoModal, setShowVideoModal] = useState(false);
 
+  // Edit Description State
+  const [isEditingDescription, setIsEditingDescription] = useState(false);
+  const [editedDescription, setEditedDescription] = useState("");
+
+  const navigate = useNavigate();
   const { toast } = useToast();
 
   /* -------- LOAD PROJECT + TASKS + ROLE -------- */
@@ -181,8 +190,6 @@ const ProjectDetail = () => {
     }
   };
 
-
-
   /* -------- UPDATE PROJECT -------- */
   const handleUpdateProject = async (id: string, data: any) => {
     const updated = await updateProject(id, data);
@@ -190,18 +197,54 @@ const ProjectDetail = () => {
     toast({ title: "Project Updated" });
   };
 
-  /* -------- DELETE PROJECT -------- */
+  /* -------- DELETE PROJECT (Admin Only) -------- */
   const handleDeleteProject = async () => {
-    if (!project || !projectId) return;
-    if (!confirm("Are you sure you want to delete this project?")) return;
+    if (!projectId || !project) return;
+    if (!confirm(`Are you sure you want to delete project "${project.name}"? This action cannot be undone.`)) return;
+
     try {
       await deleteProject(projectId);
-      toast({ title: "Project Deleted" });
+      toast({
+        title: "Project Deleted",
+        description: "Project has been successfully deleted.",
+      });
       navigate("/dashboard");
-    } catch (e: any) {
-      alert(e.message);
+    } catch (error: any) {
+      console.error(error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message || "Failed to delete project",
+      });
     }
   };
+
+  /* -------- UPDATE DESCRIPTION (Admin Only) -------- */
+  const handleUpdateDescription = async () => {
+    if (!projectId || !project) return;
+
+    try {
+      const updatedProject = await updateProject(projectId, {
+        name: project.name,
+        description: editedDescription,
+      });
+
+      setProject(updatedProject);
+      setIsEditingDescription(false);
+      toast({
+        title: "Project Updated",
+        description: "Description has been updated successfully.",
+      });
+    } catch (error: any) {
+      console.error(error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message || "Failed to update project",
+      });
+    }
+  };
+
 
   /* -------- UI STATES -------- */
   if (loading) return <p className="p-6">Loading...</p>;
@@ -211,19 +254,60 @@ const ProjectDetail = () => {
     <div className="p-6 space-y-6">
       {/* HEADER */}
       <div className="flex justify-between items-center">
-        <div>
+        <div className="flex-1 mr-4">
           <Button variant="ghost" asChild className="mb-2 pl-0 hover:bg-transparent hover:underline">
             <Link to="/dashboard">
               ← Back to Projects
             </Link>
           </Button>
-          <h1 className="text-2xl font-semibold">{project.name}</h1>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4">
+            <h1 className="text-2xl font-semibold">{project.name}</h1>
             <span className={`text-xs px-2 py-1 rounded-full ${project.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>
               {project.status === 'completed' ? 'Completed' : 'Active'}
             </span>
+            <RoleGuard currentRole={userRole} allowedRoles={["admin"]}>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleDeleteProject}
+                className="h-8"
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Delete Project
+              </Button>
+            </RoleGuard>
           </div>
-          <p className="text-muted-foreground">{project.description}</p>
+
+          <div className="mt-2 group relative">
+            {isEditingDescription ? (
+              <div className="flex gap-2 max-w-xl">
+                <Input
+                  value={editedDescription}
+                  onChange={(e) => setEditedDescription(e.target.value)}
+                  placeholder="Project Description"
+                />
+                <Button onClick={handleUpdateDescription} size="sm">Save</Button>
+                <Button variant="ghost" onClick={() => setIsEditingDescription(false)} size="sm">Cancel</Button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <p className="text-muted-foreground">{project.description}</p>
+                <RoleGuard currentRole={userRole} allowedRoles={["admin"]}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={() => {
+                      setEditedDescription(project.description);
+                      setIsEditingDescription(true);
+                    }}
+                  >
+                    <Edit2 className="w-3 h-3" />
+                  </Button>
+                </RoleGuard>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="flex gap-2">

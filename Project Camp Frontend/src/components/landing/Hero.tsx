@@ -1,18 +1,21 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles, Users, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 export function Hero() {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
       {/* Background Effects */}
       <div className="absolute inset-0 bg-[var(--gradient-hero)]" />
       <div className="absolute inset-0 bg-[var(--gradient-glow)]" />
-      
+
       {/* Grid Pattern */}
-      <div 
+      <div
         className="absolute inset-0 opacity-[0.02]"
         style={{
           backgroundImage: `linear-gradient(hsl(var(--foreground)) 1px, transparent 1px),
@@ -70,8 +73,8 @@ export function Hero() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10"
           >
-            Project Camp brings your projects, tasks, and team together. 
-            Collaborate seamlessly with powerful role-based access, 
+            Project Camp brings your projects, tasks, and team together.
+            Collaborate seamlessly with powerful role-based access,
             real-time updates, and intuitive task management.
           </motion.p>
 
@@ -88,11 +91,26 @@ export function Hero() {
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </Button>
-            <Button variant="hero-outline" size="xl" asChild>
-              <Link to="/login">
-                View demo
-              </Link>
-            </Button>
+
+            <Dialog open={isOpen} onOpenChange={setIsOpen}>
+              <DialogTrigger asChild>
+                <Button variant="hero-outline" size="xl">
+                  View demo
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-4xl p-0 overflow-hidden bg-black border-none">
+                <div className="aspect-video w-full">
+                  <video
+                    className="w-full h-full object-contain"
+                    controls
+                    autoPlay
+                    src="/demo.mp4"
+                  >
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+              </DialogContent>
+            </Dialog>
           </motion.div>
 
           {/* Stats */}
