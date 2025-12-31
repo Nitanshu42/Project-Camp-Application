@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { Plus, Upload, UserPlus, Edit, Trash2 } from "lucide-react";
+import { Plus, Upload, UserPlus, Edit, Trash2, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
 
 import { getProjectById, getMyProjectRole, addMember, updateProject, deleteProject } from "@/services/project.api";
@@ -56,6 +57,7 @@ const ProjectDetail = () => {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showVideoModal, setShowVideoModal] = useState(false);
 
   const { toast } = useToast();
 
@@ -225,6 +227,16 @@ const ProjectDetail = () => {
         </div>
 
         <div className="flex gap-2">
+          <Button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              setShowVideoModal(true);
+            }}
+          >
+            <Play className="w-4 h-4 mr-2" />
+            View Demo
+          </Button>
           {activeTab === "files" && (
             <Button onClick={() => setShowUploadModal(true)}>
               <Upload className="w-4 h-4 mr-2" />
@@ -337,6 +349,24 @@ const ProjectDetail = () => {
         isOpen={!!selectedTaskId}
         onClose={() => setSelectedTaskId(null)}
       />
+
+      {/* VIDEO MODAL */}
+      <Dialog open={showVideoModal} onOpenChange={setShowVideoModal}>
+        <DialogContent className="sm:max-w-[800px] p-0 overflow-hidden bg-black border-zinc-800">
+          <div className="relative w-full aspect-video bg-black flex items-center justify-center">
+            <video
+              controls
+              className="w-full h-full"
+              autoPlay
+              playsInline
+              onError={(e) => console.error("Video load error:", e)}
+            >
+              <source src="/Demo.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
