@@ -60,12 +60,11 @@ const sendEmail = async (options) => {
       // Debugging: Identify structure
       // console.log("Content Structure:", JSON.stringify(options.mailgenContent, null, 2));
 
-      const link = options.mailgenContent?.body?.action?.button?.link || "Link not found";
-      console.log(`[LINK] ${link}`);
       console.log("=======================================================\n");
       return { mockLink: link }; // Return Mock Link
     } else {
-      throw new Error("SMTP Credentials missing in production");
+      console.warn("⚠️ SMTP Credentials missing in production. Email suppressed.");
+      return null;
     }
   }
 
@@ -99,7 +98,9 @@ const sendEmail = async (options) => {
       console.log(`[MOCK EMAIL FALLBACK] Link: ${link}`);
       return { mockLink: link };
     } else {
-      throw error;
+      console.error("❌ Failed to send email in production:", error.message);
+      // Suppress error so user flow isn't broken
+      return null;
     }
   }
 };
