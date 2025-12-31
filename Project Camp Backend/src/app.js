@@ -15,7 +15,12 @@ app.use(cookieParser());
 // cors configurations
 app.use(
   cors({
-    origin: ["http://localhost:8080", "http://localhost:5173", "http://localhost:3000"],
+    origin: [
+      "http://localhost:8080",
+      "http://localhost:5173",
+      "http://localhost:3000",
+      process.env.CORS_ORIGIN,
+    ].filter(Boolean), // Filter out undefined if env var is not set
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
