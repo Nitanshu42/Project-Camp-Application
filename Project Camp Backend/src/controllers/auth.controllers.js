@@ -109,7 +109,8 @@ const login = asyncHandler(async (req, res) => {
 
   const options = {
     httpOnly: true,
-    secure: false, // true in production
+    secure: true, // Required for cross-site cookies
+    sameSite: "None", // Required for cross-site cookies
   };
 
   return res
@@ -129,7 +130,7 @@ const login = asyncHandler(async (req, res) => {
 // ================= Logout =================
 
 const logoutUser = asyncHandler(async (req, res) => {
-  const options = { httpOnly: true, secure: false, path: "/" };
+  const options = { httpOnly: true, secure: true, sameSite: "None", path: "/" };
 
   return res
     .status(200)
@@ -241,7 +242,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     if (incomingrefreshToken !== user.refreshToken)
       throw new ApiError(401, "Refresh token expired or used");
 
-    const options = { httpOnly: true, secure: false };
+    const options = { httpOnly: true, secure: true, sameSite: "None" };
 
     const { accessToken, refreshToken: newRefreshToken } =
       await generateAccessandRefreshTokens(user._id);
