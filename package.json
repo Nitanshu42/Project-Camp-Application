@@ -5,13 +5,15 @@
     "node": ">=18"
   },
   "workspaces": [
-    "Project Camp Backend",
-    "Project Camp Frontend"
+    "backend",
+    "frontend"
   ],
   "scripts": {
-    "build:backend": "npm --prefix \"Project Camp Backend\" install && npm --prefix \"Project Camp Backend\" run build",
-    "build:frontend": "npm --prefix \"Project Camp Frontend\" install && npm --prefix \"Project Camp Frontend\" run build",
-    "start:backend": "npm --prefix \"Project Camp Backend\" start",
-    "start:frontend": "npm --prefix \"Project Camp Frontend\" run preview"
+    "build": "npm --prefix backend install",
+    "start": "npm --prefix backend start",
+    "build:backend": "npm --prefix backend install",
+    "build:frontend": "npm --prefix frontend install && npm --prefix frontend run build",
+    "start:backend": "npm --prefix backend start",
+    "start:frontend": "npm --prefix frontend run preview"
   }
 }
