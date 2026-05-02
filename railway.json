@@ -4,7 +4,7 @@
     "backend": {
       "name": "backend",
       "source": {
-        "directory": "Project Camp Backend"
+        "directory": "backend"
       },
       "build": {
         "builder": "NIXPACKS"
@@ -19,7 +19,7 @@
     "frontend": {
       "name": "frontend",
       "source": {
-        "directory": "Project Camp Frontend"
+        "directory": "frontend"
       },
       "build": {
         "builder": "NIXPACKS"
