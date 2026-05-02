@@ -1,0 +1,35 @@
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "services": {
+    "backend": {
+      "name": "backend",
+      "source": {
+        "directory": "Project Camp Backend"
+      },
+      "build": {
+        "builder": "NIXPACKS"
+      },
+      "deploy": {
+        "startCommand": "npm start",
+        "healthcheckPath": "/api/v1/healthcheck",
+        "healthcheckTimeout": 100,
+        "restartPolicyType": "ON_FAILURE"
+      }
+    },
+    "frontend": {
+      "name": "frontend",
+      "source": {
+        "directory": "Project Camp Frontend"
+      },
+      "build": {
+        "builder": "NIXPACKS"
+      },
+      "deploy": {
+        "startCommand": "npm run build && npx -y serve -s dist",
+        "healthcheckPath": "/",
+        "healthcheckTimeout": 100,
+        "restartPolicyType": "ON_FAILURE"
+      }
+    }
+  }
+}
